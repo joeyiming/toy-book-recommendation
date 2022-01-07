@@ -9,9 +9,9 @@
 
 ​	快速从筛选标记非0的图书中抽取一本书可使用命令：` python main.py 0`
 
-​	抽取一本技术书可使用命令：`python main.py 1`
+​	抽取一本技术书：`python main.py 1`
 
-​	抽取一本非技术书可使用命令：`python main.py 2`
+​	抽取一本非技术书：`python main.py 2`
 
 ## 运行
 程序依赖以下第三方模块：
