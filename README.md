@@ -1,9 +1,9 @@
 # Book Recommendation Program
-说明
+`book-list.xlsx`：图书列表文件。
 
-`book-list.xlsx`：图书列表文件
+​	若筛选标记为 0 表示不参与抽奖。
 
-`main.py`：抽书程序
+`main.py`：图书抽奖程序
 
 ## 运行
 程序依赖以下第三方模块：

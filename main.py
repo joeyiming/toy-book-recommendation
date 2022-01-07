@@ -3,6 +3,7 @@ from types import resolve_bases
 from openpyxl import Workbook, load_workbook
 import random
 import pyperclip
+import sys
 
 
 # 一个过分简单的测试函数
@@ -32,7 +33,12 @@ def fetchData(storeData: list, workBook: Workbook,filterAttr='筛选标记')->No
         if newBook[filterAttr]!=0:
             storeData.append(newBook)
 
-def getLongInfo(book: dict,displayWidth=40,notDisplayAttrNames=['筛选标记','图书名','主观评级','主题','相关链接']) -> str:
+def copyLink(book:dict,linkAttrName='相关链接')->None:
+    if book[linkAttrName]:
+        pyperclip.copy(book[linkAttrName])
+    print(f'已将{linkAttrName}复制到粘贴板\n')
+
+def getLongInfo(book: dict,displayWidth=40,notDisplayAttrNames=['筛选标记','图书名','主观评级','主题']) -> str:
     """获取书本的格式化介绍性信息
 
     Args:
@@ -71,11 +77,29 @@ def randomMode(data: list,filename:str) -> None:
     choosenBook = random.choice(data)
     result = getLongInfo(choosenBook)
     print(result)
+    copyLink(choosenBook)
+    with open(filename,'w+',encoding='utf8') as f:
+        f.write(result)
+
+def filterMode(data:list,filename:str,condition=1):
+    """TODO 筛选模式：根据特定条件对图书列表筛选，并从筛选结果中随机抽取一本书，打印到控制台并保存为文本文件。
+
+    Args:
+        data (list): 图书列表
+        filename (str): 输出结果文件文件名
+        condition (int): 条件代码
+            1: 主题限定为技术
+            2: 主题不含技术
+    """
+    choosenBook = random.choice(data)
+    result = getLongInfo(choosenBook)
+    print(result)
     with open(filename,'w+',encoding='utf8') as f:
         f.write(result)
 
 
-def main() -> None:
+
+def main():
     OPENFILENAME = 'book-list.xlsx'
     SAVAFILENAME = '抽奖结果.txt'
     readBook = load_workbook(OPENFILENAME)
@@ -84,9 +108,26 @@ def main() -> None:
         # 过分简单的异常处理
         print('运行错误')
         return
-
     fetchData(bookList, readBook)
-    randomMode(bookList,SAVAFILENAME)
+
+    # 如果运行命令不带额外参数，进入互动，否则跳过互动
+    if (len(sys.argv)<2):
+        print('你好，请问有筛选条件么？任何书还是就技术书呢？\n')
+        answer=input('0: 任何书 1: 就技术书 2:不要技术书 （直接回车，默认为0）：').strip()
+        if answer=='':
+            answer=0
+        else:
+            answer=int(answer)
+    else:
+        answer=int(sys.argv[1])
+        print(answer)
+    answer=0
+    if answer==0:
+        randomMode(bookList,SAVAFILENAME)
+    else:
+        filterMode(bookList,OPENFILENAME,answer)
+    print('很高兴能帮到你，再见。\n')
+
 
 
 if __name__ == '__main__':
