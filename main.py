@@ -32,6 +32,7 @@ def fetchData(storeData: list, workBook: Workbook,filterAttr='筛选标记')->No
         # 筛选操作
         if newBook[filterAttr]!=0:
             storeData.append(newBook)
+    # print('总条数:',len(storeData))
 
 def copyLink(book:dict,linkAttrName='相关链接')->None:
     if book[linkAttrName]:
@@ -82,7 +83,7 @@ def randomMode(data: list,filename:str) -> None:
         f.write(result)
 
 def filterMode(data:list,filename:str,condition=1):
-    """TODO 筛选模式：根据特定条件对图书列表筛选，并从筛选结果中随机抽取一本书，打印到控制台并保存为文本文件。
+    """筛选模式：根据特定条件对图书列表筛选，并从筛选结果中随机抽取一本书，打印到控制台并保存为文本文件。
 
     Args:
         data (list): 图书列表
@@ -91,9 +92,30 @@ def filterMode(data:list,filename:str,condition=1):
             1: 主题限定为技术
             2: 主题不含技术
     """
-    choosenBook = random.choice(data)
-    result = getLongInfo(choosenBook)
-    print(result)
+    filteredData = []
+
+    # condition: 1
+    # 技术书 
+    if condition==1:
+        for book in data:
+            if book['主题'].count('技术')>0:
+                filteredData.append(book)
+    
+    # condition: 2
+    # 非技术书 
+    if condition==2:
+        for book in data:
+            if book['主题'].count('技术')==0:
+                filteredData.append(book)
+
+    # print('筛选后条数',len(filteredData))
+    result=''
+    if len(filteredData)>0:
+        choosenBook = random.choice(filteredData)
+        result = getLongInfo(choosenBook)
+        print(result)
+    else:
+        print('筛选结果为空。')
     with open(filename,'w+',encoding='utf8') as f:
         f.write(result)
 
@@ -120,12 +142,10 @@ def main():
             answer=int(answer)
     else:
         answer=int(sys.argv[1])
-        print(answer)
-    answer=0
     if answer==0:
         randomMode(bookList,SAVAFILENAME)
     else:
-        filterMode(bookList,OPENFILENAME,answer)
+        filterMode(bookList,SAVAFILENAME,answer)
     print('很高兴能帮到你，再见。\n')
 
 
