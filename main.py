@@ -2,6 +2,7 @@ from os import read
 from types import resolve_bases
 from openpyxl import Workbook, load_workbook
 import random
+import pyperclip
 
 
 # 一个过分简单的测试函数
@@ -10,8 +11,8 @@ def test(workBook: Workbook)->bool:
     a1 = sheet['A1']
     return bool(a1)
 
-def fetchData(storeData: list, workBook: Workbook)->None:
-    """获取数据，并存储在函数外的列表中
+def fetchData(storeData: list, workBook: Workbook,filterAttr='筛选标记')->None:
+    """获取数据，如果筛选标记不为 0 则存储。
 
     Args:
         storeData (list): 用于存储数据的列表
@@ -23,13 +24,13 @@ def fetchData(storeData: list, workBook: Workbook)->None:
     attrList = []
     for cell in sheet[1]:
         attrList.append(cell.value)
-    # attrList=['Flag','Name','Stars','Themes','Memo','Link'] 
-    # print(attrList)
     for row in sheet.iter_rows(min_row=2):
         newBook = {}
         for index, cell in enumerate(row):
             newBook[attrList[index]] = cell.value
-        storeData.append(newBook)
+        # 筛选操作
+        if newBook[filterAttr]!=0:
+            storeData.append(newBook)
 
 def getLongInfo(book: dict,displayWidth=40,notDisplayAttrNames=['筛选标记','图书名','主观评级','主题','相关链接']) -> str:
     """获取书本的格式化介绍性信息
@@ -65,13 +66,13 @@ def randomMode(data: list,filename:str) -> None:
 
     Args:
         data (list): 图书列表
+        filename (str): 输出结果文件文件名
     """
     choosenBook = random.choice(data)
     result = getLongInfo(choosenBook)
     print(result)
     with open(filename,'w+',encoding='utf8') as f:
         f.write(result)
-
 
 
 def main() -> None:
