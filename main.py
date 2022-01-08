@@ -114,6 +114,7 @@ def filterMode(data:list,filename:str,condition=1):
         choosenBook = random.choice(filteredData)
         result = getLongInfo(choosenBook)
         print(result)
+        copyLink(choosenBook)
     else:
         print('筛选结果为空。')
     with open(filename,'w+',encoding='utf8') as f:
@@ -135,7 +136,7 @@ def main():
     # 如果运行命令不带额外参数，进入互动，否则跳过互动
     if (len(sys.argv)<2):
         print('你好，请问有筛选条件么？任何书还是就技术书呢？\n')
-        answer=input('0: 任何书 1: 就技术书 2:不要技术书 （直接回车，默认为0）：').strip()
+        answer=input('0: 任何书 1: 就技术书 2：不要技术书 （直接回车，默认为0）：').strip()
         if answer=='':
             answer=0
         else:
